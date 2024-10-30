@@ -1,5 +1,6 @@
 package com.proyecto.valores.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -13,12 +14,13 @@ public class  SMSservice{
 
     private final SnsClient snsClient;
 
-    public SMSservice() {
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create("AKIAXWMA6XXW2OC44P2G",
-                "rhuD+UyGXa91bpXEYtAE5l39thXoa6Cx+mOFJGth");
+    public SMSservice(@Value("${aws.accessKeyId}") String accessKeyId,
+                        @Value("${aws.secretKey}") String secretKey,
+                        @Value("${aws.ses.region}") String region) {
+        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId,secretKey);
         this.snsClient = SnsClient.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.US_EAST_2) // Cambia a tu región
+                .region(Region.of(region)) // Cambia a tu región
                 .build();
     }
 
